@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>헤어 어게인 EP.0 쇼츠</title>
+<style>
+  @font-face { font-family: P; font-weight: 500; src: url(fonts/Pretendard-Medium.otf); }
+  @font-face { font-family: P; font-weight: 700; src: url(fonts/Pretendard-Bold.otf); }
+  @font-face { font-family: P; font-weight: 800; src: url(fonts/Pretendard-ExtraBold.otf); }
+  @font-face { font-family: P; font-weight: 900; src: url(fonts/Pretendard-Black.otf); }
+
+  :root {
+    --bg: #111317;
+    --ink: #F5F2EA;
+    --mute: #8E929B;
+    --acc: #FFD43B;      /* 형광펜 노랑 */
+    --acc2: #FF6B57;     /* 경고 코랄 */
+    --mint: #5FD3B5;     /* 홈케어 민트 */
+    --card: #1C1F25;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1080px; height: 1920px; overflow: hidden; background: var(--bg); }
+  body { font-family: P, sans-serif; color: var(--ink); word-break: keep-all; }
+
+  #stage { position: relative; width: 1080px; height: 1920px; overflow: hidden;
+    background: radial-gradient(1200px 900px at 50% 42%, #1B1E24 0%, var(--bg) 70%); }
+
+  /* 상단 진행바 + 시리즈 태그 (쇼츠 UI 상단 안전영역 아래) */
+  #bar { position: absolute; left: 0; top: 0; height: 12px; width: 0; background: var(--acc); }
+  #tag { position: absolute; left: 80px; top: 230px; font-size: 34px; font-weight: 700; color: var(--mute);
+    letter-spacing: 1px; display: flex; gap: 14px; align-items: center; }
+  #tag b { color: var(--bg); background: var(--acc); padding: 6px 14px; border-radius: 10px; font-weight: 900; }
+
+  .scene { position: absolute; inset: 0; padding: 0 80px; display: flex; flex-direction: column;
+    justify-content: center; align-items: flex-start; opacity: 0; padding-bottom: 140px; }
+  .center { align-items: center; text-align: center; }
+  [data-in] { opacity: 0; will-change: transform, opacity; }
+
+  .xl { font-size: 146px; font-weight: 900; line-height: 1.12; letter-spacing: -4px; }
+  .l  { font-size: 110px;  font-weight: 900; line-height: 1.18; letter-spacing: -3px; }
+  .m  { font-size: 78px;  font-weight: 800; line-height: 1.3;  letter-spacing: -2px; }
+  .s  { font-size: 58px;  font-weight: 700; line-height: 1.4;  letter-spacing: -1px; }
+  .xs { font-size: 44px;  font-weight: 500; line-height: 1.4;  color: var(--mute); }
+  .acc { color: var(--acc); } .acc2 { color: var(--acc2); } .mint { color: var(--mint); } .mute { color: var(--mute); }
+  .gap { height: 36px; } .gap-s { height: 18px; }
+
+  /* 형광펜 */
+  .hl { background-image: linear-gradient(var(--acc), var(--acc)); background-repeat: no-repeat;
+    background-position: 0 55%; background-size: calc(var(--h, 0) * 100%) 92%; padding: 0 10px; border-radius: 8px; }
+  .hl.on { color: var(--bg); }
+  /* 취소선 */
+  .strike { position: relative; display: inline-block; }
+  .strike::after { content: ""; position: absolute; left: -6px; top: 54%; height: 10px; border-radius: 5px;
+    width: calc(var(--s, 0) * (100% + 12px)); background: var(--acc2); }
+
+  /* S1 숫자 */
+  .big8 { font-size: 480px; font-weight: 900; line-height: .95; color: var(--acc); letter-spacing: -14px; }
+
+  /* 체크 리스트 */
+  .row { display: flex; align-items: center; gap: 26px; margin: 16px 0; }
+  .ico { width: 108px; height: 108px; border-radius: 30px; background: var(--card); display: grid; place-items: center;
+    font-size: 60px; flex: none; }
+
+  /* 말풍선 */
+  .bubble { background: var(--ink); color: var(--bg); border-radius: 44px; padding: 40px 50px; font-weight: 800;
+    font-size: 70px; line-height: 1.3; letter-spacing: -2px; position: relative; max-width: 900px; }
+  .bubble.me { border-bottom-right-radius: 10px; align-self: flex-end; }
+  .bubble.them { background: var(--card); color: var(--ink); border-bottom-left-radius: 10px; }
+  .who { font-size: 36px; color: var(--mute); font-weight: 700; margin: 0 0 12px 8px; }
+
+  /* 인터넷 소문 카드 */
+  .noise { position: absolute; background: var(--card); border: 3px solid #2C3038; border-radius: 30px;
+    padding: 32px 44px; font-size: 62px; font-weight: 800; letter-spacing: -1.5px; white-space: nowrap; }
+  .noise small { display: block; font-size: 30px; color: var(--mute); font-weight: 700; margin-bottom: 6px; }
+
+  /* 병원 vs 집 */
+  .split { width: 100%; display: flex; flex-direction: column; gap: 34px; }
+  .box { border-radius: 36px; padding: 40px 46px; background: var(--card); border-left: 14px solid var(--acc2); }
+  .box.home { border-left-color: var(--mint); }
+  .box h3 { font-size: 50px; font-weight: 900; margin-bottom: 14px; letter-spacing: -1px; }
+  .box p { font-size: 60px; font-weight: 800; line-height: 1.32; letter-spacing: -1.5px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 8px; }
+  .chip { font-size: 50px; font-weight: 800; padding: 14px 26px; border-radius: 999px; background: #263A35; color: var(--mint); }
+
+  /* 다음 편 카드 */
+  .next { width: 100%; border-radius: 40px; padding: 56px 54px; background: var(--ink); color: var(--bg); }
+  .next .lbl { font-size: 38px; font-weight: 900; color: var(--bg); background: var(--acc); display: inline-block;
+    padding: 8px 20px; border-radius: 12px; margin-bottom: 26px; }
+  .next .q { font-size: 84px; font-weight: 900; line-height: 1.25; letter-spacing: -2.5px; }
+  .follow { margin-top: 48px; font-size: 58px; font-weight: 800; display: flex; gap: 18px; align-items: center; }
+  .follow b { background: var(--acc2); color: #fff; padding: 12px 28px; border-radius: 999px; font-weight: 900; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="bar"></div>
+  <div id="tag"><b>EP.0</b><span>헤어 어게인 · 탈모 기록</span></div>
+
+  <!-- S1 HOOK 0.0–3.3 -->
+  <section class="scene" data-start="0" data-end="3.3">
+    <div class="m" data-in="0.05" data-fx="up">탈모 고민 때문에</div>
+    <div style="display:flex; align-items:flex-end; gap:24px; margin-top:6px">
+      <div class="m" data-in="0.25" data-fx="up">미용실</div>
+    </div>
+    <div style="display:flex; align-items:flex-end; gap:20px;">
+      <div class="big8" data-in="0.3" data-fx="pop" data-count="1,8,0.35,1.25">8</div>
+      <div class="l" data-in="1.2" data-fx="up" style="padding-bottom:40px">곳을</div>
+    </div>
+    <div class="l" data-in="1.55" data-fx="up">돌아봤습니다</div>
+  </section>
+
+  <!-- S2 계기 3.3–6.6 -->
+  <section class="scene" data-start="3.3" data-end="6.6">
+    <div class="l" data-in="3.4" data-fx="pop">“어? 원래<br>내 머리가 <span class="acc">이랬나?</span>”</div>
+    <div class="gap"></div><div class="gap"></div>
+    <div class="row" data-in="4.3" data-fx="left"><div class="ico">💇</div><div class="s">괜히 더 신경 쓰이는 <span class="acc">가르마</span></div></div>
+    <div class="row" data-in="4.85" data-fx="left"><div class="ico">🚿</div><div class="s">감고 나면 <span class="acc">빠진 머리카락</span>부터 확인</div></div>
+  </section>
+
+  <!-- S3 미용실 질문 6.6–10.2 -->
+  <section class="scene" data-start="6.6" data-end="10.2" style="align-items:stretch">
+    <div class="who" style="text-align:right" data-in="6.7" data-fx="fade">나</div>
+    <div class="bubble me" data-in="6.75" data-fx="pop">혹시… <span class="hl" data-hl="7.4,0.5">탈모 고민 상담</span>도<br>해주시나요?</div>
+    <div class="gap"></div>
+    <div class="who" data-in="8.1" data-fx="fade">미용실 8곳</div>
+    <div class="bubble them" data-in="8.15" data-fx="pop" style="align-self:flex-start">😅 아… 그게…</div>
+    <div class="gap"></div>
+    <div class="m" data-in="8.9" data-fx="up">대부분, <span class="acc2">당황한 표정</span>이었습니다</div>
+  </section>
+
+  <!-- S4 원했던 것 10.2–13.9 -->
+  <section class="scene" data-start="10.2" data-end="13.9">
+    <div class="m mute" data-in="10.3" data-fx="up"><span class="strike" data-strike="10.85,0.35">치료해 달라는 게</span> 아니었어요</div>
+    <div class="gap-s"></div>
+    <div class="l" data-in="11.2" data-fx="up">알고 싶었던 건<br><span class="acc">일상 관리법</span></div>
+    <div class="gap"></div>
+    <div class="row" data-in="11.9" data-fx="left"><div class="ico">✂️</div><div class="s">숱 적은 머리에 어울리는 <b>커트</b></div></div>
+    <div class="row" data-in="12.25" data-fx="left"><div class="ico">〰️</div><div class="s">가르마는 어떻게 탈지</div></div>
+    <div class="row" data-in="12.6" data-fx="left"><div class="ico">💨</div><div class="s">드라이는 어떻게 할지</div></div>
+  </section>
+
+  <!-- S5 인터넷 정보 13.9–18.0 -->
+  <section class="scene center" data-start="13.9" data-end="18.0">
+    <div class="xs" style="position:absolute; top:380px; left:0; right:0" data-in="14.0" data-fx="fade">인터넷에 검색해 보면…</div>
+    <div class="noise" style="left:80px;  top:500px; --r:-4deg" data-in="14.15" data-fx="pop" data-wiggle="1"><small>후기</small>“이거 쓰고 좋아졌다”</div>
+    <div class="noise" style="left:280px; top:770px; --r:3deg"  data-in="14.5" data-fx="pop" data-wiggle="1"><small>성분</small>“이 성분이 좋다”</div>
+    <div class="noise" style="left:110px; top:1040px; --r:-2deg" data-in="14.85" data-fx="pop" data-wiggle="1"><small>방법</small>“이건 꼭 해야 한다”</div>
+    <div class="l" style="position:absolute; top:1320px; left:0; right:0" data-in="15.9" data-fx="up">그중 <span class="hl" data-hl="16.4,0.5">실제로 확인된</span><br>정보는 뭘까?</div>
+  </section>
+
+  <!-- S6 병원 vs 집 18.0–23.0 -->
+  <section class="scene" data-start="18.0" data-end="23.0">
+    <div class="m" data-in="18.1" data-fx="up">‘탈모 관리’, 한 덩어리가 아니었다</div>
+    <div class="gap"></div>
+    <div class="split">
+      <div class="box" data-in="18.6" data-fx="left">
+        <h3 class="acc2">🏥 의료진 진료가 필요한 영역</h3>
+        <p>빠지는 양이 <span class="acc">갑자기 늘었다면</span><br>혼자 판단하지 말고 진료부터</p>
+      </div>
+      <div class="box home" data-in="19.9" data-fx="left">
+        <h3 class="mint">🏠 매일 내가 하는 영역</h3>
+        <div class="chips">
+          <span class="chip" data-in="20.3" data-fx="pop">샴푸·세정</span>
+          <span class="chip" data-in="20.5" data-fx="pop">말리는 법</span>
+          <span class="chip" data-in="20.7" data-fx="pop">무심코 하는 습관</span>
+          <span class="chip" data-in="20.9" data-fx="pop">두피 제품</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- S7 핵심 메시지 23.0–26.4 -->
+  <section class="scene" data-start="23.0" data-end="26.4">
+    <div class="m mute" data-in="23.1" data-fx="up">처음부터 비싼 것 사기 전에</div>
+    <div class="gap-s"></div>
+    <div class="xl" data-in="23.5" data-fx="up">돈 쓰기 전에,</div>
+    <div class="xl" data-in="24.0" data-fx="up"><span class="hl" data-hl="24.5,0.55">제발 먼저</span></div>
+    <div class="xl" data-in="24.3" data-fx="up">알아봅시다.</div>
+  </section>
+
+  <!-- S8 CTA 26.4–30.0 -->
+  <section class="scene" data-start="26.4" data-end="30.05">
+    <div class="next" data-in="26.5" data-fx="pop">
+      <div class="lbl">다음 편</div>
+      <div class="q">머리가 빠지기 시작했다면<br><span class="hl" data-hl="27.3,0.6">제일 먼저</span><br>뭘 확인해야 할까?</div>
+    </div>
+    <div class="follow" data-in="27.8" data-fx="up"><b>팔로우</b> 하고 같이 알아봐요</div>
+    <div class="xs" style="margin-top:22px" data-in="28.2" data-fx="fade">저도 이제 시작입니다 · 헤어 어게인</div>
+  </section>
+</div>
+
+<script>
+  const DUR = 30;
+  const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+  const easeOut = x => 1 - Math.pow(1 - x, 3);
+  const easeBack = x => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
+
+  const scenes = [...document.querySelectorAll('.scene')].map(el => ({
+    el, a: +el.dataset.start, b: +el.dataset.end,
+    items: [...el.querySelectorAll('[data-in]')],
+    hls: [...el.querySelectorAll('[data-hl]')],
+    strikes: [...el.querySelectorAll('[data-strike]')],
+    counts: [...el.querySelectorAll('[data-count]')],
+  }));
+  const bar = document.getElementById('bar');
+
+  function fx(el, t) {
+    const tin = +el.dataset.in, kind = el.dataset.fx || 'up';
+    const d = kind === 'fade' ? 0.35 : 0.45;
+    const p = clamp((t - tin) / d);
+    const r = el.style.getPropertyValue('--r') || '0deg';
+    let tr = '', op = easeOut(p);
+    if (kind === 'up')   tr = `translateY(${(1 - easeOut(p)) * 60}px)`;
+    if (kind === 'left') tr = `translateX(${(1 - easeOut(p)) * -80}px)`;
+    if (kind === 'pop')  tr = `scale(${0.6 + 0.4 * easeBack(p)})`;
+    if (el.dataset.wiggle && p >= 1) tr += ` translateY(${Math.sin((t - tin) * 7 + tin * 3) * 5}px)`;
+    el.style.opacity = op;
+    el.style.transform = `${tr} rotate(${r})`;
+  }
+
+  window.render = function (t) {
+    bar.style.width = (clamp(t / DUR) * 1080) + 'px';
+    for (const s of scenes) {
+      const on = t >= s.a - 0.001 && t < s.b;
+      if (!on) { s.el.style.opacity = 0; continue; }
+      const fin = clamp((t - s.a) / 0.15), fout = clamp((s.b - t) / 0.2);
+      s.el.style.opacity = Math.min(fin, fout);
+      s.el.style.transform = `scale(${1 + (1 - fout) * 0.04})`;
+      s.items.forEach(el => fx(el, t));
+      s.hls.forEach(el => { const [a, d] = el.dataset.hl.split(',').map(Number); const h = easeOut(clamp((t - a) / d)); el.style.setProperty('--h', h); el.classList.toggle('on', h > 0.45); });
+      s.strikes.forEach(el => { const [a, d] = el.dataset.strike.split(',').map(Number); el.style.setProperty('--s', easeOut(clamp((t - a) / d))); });
+      s.counts.forEach(el => {
+        const [from, to, a, b] = el.dataset.count.split(',').map(Number);
+        const p = clamp((t - a) / (b - a));
+        el.textContent = Math.round(from + (to - from) * easeOut(p));
+      });
+    }
+  };
+
+  // 브라우저에서 직접 열면 재생 (렌더링 시에는 ?render=1 로 정지)
+  if (!location.search.includes('render')) {
+    const t0 = performance.now();
+    const loop = () => { render(((performance.now() - t0) / 1000) % DUR); requestAnimationFrame(loop); };
+    document.fonts.ready.then(loop);
+  } else { render(0); }
+</script>
+</body>
+</html>
